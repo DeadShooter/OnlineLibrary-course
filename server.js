@@ -6,14 +6,18 @@ if(process.env.NODE_ENV!=='production')
 const express=require('express')
 const app=express()
 const expressLayouts=require('express-ejs-layouts')
+const bodyParse=require('body-parser')
 
 const IndexRouter=require('./routes/index')
+const AuthorRouter=require('./routes/authors')
+
 
 app.set('view engine','ejs')
 app.set('views',__dirname + '/views')
 app.set('layout','layouts/layout')
 app.use(expressLayouts)
 app.use(express.static('public'))
+app.use(express.urlencoded({limit:'10mb',extended:false}))
 
 const mongoose=require('mongoose')
 mongoose.connect(process.env.DATABASE_URL,{useNewUrlParser:true,useUnifiedTopology: true})
@@ -23,6 +27,8 @@ db.once('open',()=>console.log('Connected to MANGO'))
 
 
 app.use('/',IndexRouter)
+app.use('/authors',AuthorRouter)
+
 
 app.listen(process.env.PORT||3000)
 
